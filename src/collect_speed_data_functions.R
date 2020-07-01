@@ -1,6 +1,10 @@
 #################################
 library(dplyr)
 
+# --> Add grouped score column
+source("~/Documents/Github/serve_speeds/src/grouped_score.R")
+
+
 collect_match_stats <- function(server_match_id, year, tournament, server_name){
   # Given a match ID, carefully re-state player1 and player2 as simply server and returner
   # collect: serve speed, score prior to serve, set number, game number
@@ -144,6 +148,9 @@ get_slam_data <- function(Player, year, tournament){
              match_id = as.character(match_id),
              tournament = tournament)
     
+    all_data$grouped_score <- mapply(all_data$server_score,
+                                     all_data$returner_score,
+                                     FUN = get_grouped_score)
     
     return(all_data)
     
@@ -196,6 +203,8 @@ collect_all_grand_slam_data <- function(player, year){
                               Speed_MPH*1.60934,
                               Speed_KMH),
            ServeNumber = ifelse(ServeNumber == 0, 2, ServeNumber))
+  
+  
   
   return(all_data)
   

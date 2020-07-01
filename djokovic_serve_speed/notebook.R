@@ -55,3 +55,30 @@ plot_servespeed_density(djokovic_ao_20,
                         tournament = 'ausopen',
                         year = 2020)
 
+djokovic_data <- do.call("rbind", list(djokovic_ao_18, 
+                                       djokovic_ao_19, 
+                                       djokovic_ao_20))
+djokovic_data <- djokovic_data %>%
+  filter(Speed_KMH > 0)
+
+
+ggplot(djokovic_data, aes(x = Speed_KMH, y = as.factor(year),
+                           fill = as.factor(year), alpha = 0.2)) + 
+  geom_density_ridges(scale = 1.6,
+                      quantile_lines = TRUE, quantiles = 2) +
+  facet_wrap(~ServeNumber)
+
+
+djokovic_1st_serve <- djokovic_data %>%
+  filter(ServeNumber == 1)
+
+djokovic_2nd_serve <- djokovic_data %>%
+  filter(ServeNumber == 2)
+
+
+ggplot(djokovic_2nd_serve, aes(x = Speed_KMH, y = as.factor(year),
+                          fill = as.factor(year), alpha = 0.2)) + 
+  geom_density_ridges(scale = 1.1,
+                      quantile_lines = TRUE, quantiles = 2) +
+  facet_grid(~grouped_score)
+
