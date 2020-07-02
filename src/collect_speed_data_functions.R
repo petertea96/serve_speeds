@@ -4,6 +4,9 @@ library(dplyr)
 # --> Add grouped score column
 source("~/Documents/Github/serve_speeds/src/grouped_score.R")
 
+# --> Add Deuce/Ad. court side column
+source("~/Documents/Github/serve_speeds/src/ad_or_deuce_court.R")
+
 
 collect_match_stats <- function(server_match_id, year, tournament, server_name){
   # Given a match ID, carefully re-state player1 and player2 as simply server and returner
@@ -38,7 +41,9 @@ collect_match_stats <- function(server_match_id, year, tournament, server_name){
     dplyr::select(match_id, PointWinner, SetNo, GameNo, PointNumber,
                   PointServer, Speed_KMH, Speed_MPH,
                   P1DoubleFault, P2DoubleFault, P1Ace, P2Ace,
-                  ServeNumber, P1Score, P2Score)
+                  ServeNumber, P1Score, P2Score,
+                  
+                  RallyCount, P1DistanceRun, P2DistanceRun, ServeWidth, ReturnDepth)
   
   n <- nrow(player_points_data)
   # Get scores (score prior to serve) relative to the server
@@ -61,20 +66,31 @@ collect_match_stats <- function(server_match_id, year, tournament, server_name){
   
   if(player_1_or_2 == 1){
     server_points_data <- player_points_data %>%
-      dplyr::select(-P2DoubleFault, -P1Score, -P2Score, -P2Ace) %>%
+      dplyr::select(-P2DoubleFault, -P1Score, -P2Score, -P2Ace,
+                   ) %>%
       dplyr::filter(PointServer == 1) %>%
       dplyr::mutate(won_point = ifelse(PointWinner == 1, 1, 0),
                     returner = opponent_name) %>%
       rename(server_df = P1DoubleFault,
-             server_ace = P1Ace)
+             server_ace = P1Ace,
+             server_distance_run = P1DistanceRun,
+             returner_distance_run = P2DistanceRun)
   } else{
     server_points_data <- player_points_data %>%
-      dplyr::select(-P1DoubleFault, -P1Score, -P2Score, -P1Ace) %>%
+      dplyr::select(-P1DoubleFault, -P1Score, -P2Score, -P1Ace,
+                   ) %>%
       dplyr::filter(PointServer == 2) %>%
       dplyr::mutate(won_point = ifelse(PointWinner == 2, 1, 0),
                     returner = opponent_name)%>%
-      rename(server_df = P2DoubleFault, server_ace = P2Ace)
+      rename(server_df = P2DoubleFault, server_ace = P2Ace,
+             server_distance_run = P2DistanceRun,
+             returner_distance_run = P1DistanceRun 
+             )
   }
+  
+  # --> Change coding of ServeWidth?
+  #server_points_data <- server_points_data %>%
+  #  mutate(ServeWidth = ifelse(ServeWidth == ))
   
   return(server_points_data)
   
@@ -148,9 +164,15 @@ get_slam_data <- function(Player, year, tournament){
              match_id = as.character(match_id),
              tournament = tournament)
     
+    # Add grouped score
     all_data$grouped_score <- mapply(all_data$server_score,
                                      all_data$returner_score,
                                      FUN = get_grouped_score)
+    
+    # Add side of court served
+    all_data$court_side <- mapply(all_data$server_score,
+                                  all_data$returner_score,
+                                  FUN = ad_or_deuce)
     
     return(all_data)
     
@@ -220,17 +242,6 @@ collect_all_grand_slam_data <- function(player, year){
 ##### ----- ##### ----- ##### ----- ##### ----- ##### ----- ##### ----- ##### ----- ##### 
 # End test function
 ##### ----- ##### ----- ##### ----- ##### ----- ##### ----- ##### ----- ##### ----- ##### 
-
-
-
-
-
-
-
-
-
-
-
 
 
 ### 

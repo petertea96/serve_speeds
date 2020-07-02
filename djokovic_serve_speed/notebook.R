@@ -64,10 +64,17 @@ djokovic_data <- djokovic_data %>%
 
 ggplot(djokovic_data, aes(x = Speed_KMH, y = as.factor(year),
                            fill = as.factor(year), alpha = 0.2)) + 
-  geom_density_ridges(scale = 1.6,
+  geom_density_ridges(scale = 1.0,
                       quantile_lines = TRUE, quantiles = 2) +
   facet_wrap(~ServeNumber)
 
+
+
+# -- Speed on Ad court vs. Deuce court
+source("~/Documents/Github/serve_speeds/src/ad_or_deuce_court.R")
+djokovic_data$court_side <- mapply(djokovic_data$server_score,
+                                   djokovic_data$returner_score,
+                                   FUN = ad_or_deuce)
 
 djokovic_1st_serve <- djokovic_data %>%
   filter(ServeNumber == 1)
@@ -75,10 +82,36 @@ djokovic_1st_serve <- djokovic_data %>%
 djokovic_2nd_serve <- djokovic_data %>%
   filter(ServeNumber == 2)
 
-
+# -- 2nd serves by score situation
 ggplot(djokovic_2nd_serve, aes(x = Speed_KMH, y = as.factor(year),
                           fill = as.factor(year), alpha = 0.2)) + 
   geom_density_ridges(scale = 1.1,
                       quantile_lines = TRUE, quantiles = 2) +
   facet_grid(~grouped_score)
+
+# -- 2nd serves by serve side
+ggplot(djokovic_2nd_serve, aes(x = Speed_KMH, y = as.factor(year),
+                               fill = as.factor(year), alpha = 0.2)) + 
+  geom_density_ridges(scale = 1.1,
+                      quantile_lines = TRUE, quantiles = 2) +
+  facet_grid(~court_side)
+
+
+
+ggplot(djokovic_1st_serve, aes(x = Speed_KMH, y = as.factor(year),
+                               fill = as.factor(year), alpha = 0.2)) + 
+  geom_density_ridges(scale = 1.1,
+                      quantile_lines = TRUE, quantiles = 2) +
+  facet_grid(~grouped_score)
+
+# -- 1st serves by serve side
+ggplot(djokovic_1st_serve, aes(x = Speed_KMH, y = as.factor(year),
+                               fill = as.factor(year), alpha = 0.2)) + 
+  geom_density_ridges(scale = 1.1,
+                      quantile_lines = TRUE, quantiles = 2) +
+  facet_grid(~court_side)
+
+
+
+
 
