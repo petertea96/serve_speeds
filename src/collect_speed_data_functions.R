@@ -92,6 +92,15 @@ collect_match_stats <- function(server_match_id, year, tournament, server_name){
   #server_points_data <- server_points_data %>%
   #  mutate(ServeWidth = ifelse(ServeWidth == ))
   
+  
+  #--> Convert Frenchopen serve speeds to KMH
+  #--> Convert ServeNumber '0' to 2
+  server_points_data <- server_points_data %>%
+    mutate(Speed_KMH = ifelse(is.na(Speed_KMH),
+                              Speed_MPH*1.60934,
+                              Speed_KMH),
+           ServeNumber = ifelse(ServeNumber == 0, 2, ServeNumber))
+  
   return(server_points_data)
   
 }
@@ -217,14 +226,7 @@ collect_all_grand_slam_data <- function(player, year){
   }
   
   all_data = do.call(rbind, complete_dat)
-  
-  #--> Convert Frenchopen serve speeds to KMH
-  #--> Convert ServeNumber '0' to 2
-  all_data <- all_data %>%
-    mutate(Speed_KMH = ifelse(is.na(Speed_KMH),
-                              Speed_MPH*1.60934,
-                              Speed_KMH),
-           ServeNumber = ifelse(ServeNumber == 0, 2, ServeNumber))
+
   
   
   

@@ -15,26 +15,27 @@ plot_servespeed_density <- function(my_data, plot_title, tournament, year, y=0.0
   Avg_first_serve <- Avg_speeds$`mean(Speed_KMH)`[1]
   Avg_second_serve <- Avg_speeds$`mean(Speed_KMH)`[2]
   
-  if (tournament == "wimbledon"){
-    background_colour <- "#F0FAE3"
-  } else if (tournament == "usopen") {
-    background_colour <- "#f3f6fc"
-  } else if (tournament == "ausopen"){
-    background_colour <- "#E8F7FF"
-  }
+  #if (tournament == "wimbledon"){
+  #  background_colour <- "#F0FAE3"
+  #} else if (tournament == "usopen") {
+  #  background_colour <- "#f3f6fc"
+  #} else if (tournament == "ausopen"){
+  #  background_colour <- "#E8F7FF"
+  #}
+  background_colour <- "#f3f6fc"
   
-  if (tournament == "usopen"){
-    tournament <- "US Open"
-  }
+  #if (tournament == "usopen"){
+  #  tournament <- "US Open"
+  #}
   
-  if (tournament == "ausopen"){
-    tournament <- "Australian Open"
-  }
+  #if (tournament == "ausopen"){
+  #  tournament <- "Australian Open"
+  #}
   
   
   myplot <- ggplot(my_data, aes(x=Speed_KMH, fill=as.factor(ServeNumber) )) +
     geom_density( aes(y = ..density.., fill=as.factor(ServeNumber)), alpha = 0.6) + 
-    ggtitle(plot_title) + 
+    #ggtitle(plot_title) + 
     xlab("Speed (KM/H)") + ylab("Density") + labs(fill = "Serve Number" ) +
     theme_classic() +
     

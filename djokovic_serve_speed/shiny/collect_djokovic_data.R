@@ -35,4 +35,3 @@ djokovic_data <- do.call("rbind", djokovic_data_list)
 write.csv(djokovic_data,
           '~/Documents/Github/serve_speeds/djokovic_serve_speed/shiny/djokovic.csv',
           row.names = FALSE)
-
